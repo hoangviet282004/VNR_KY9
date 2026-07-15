@@ -1,0 +1,13 @@
+{
+  "name": "vnr-chatbot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "upload-kb": "node scripts/upload-knowledge-base.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0"
+  }
+}
