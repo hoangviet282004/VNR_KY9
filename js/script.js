@@ -80,6 +80,8 @@
   });
 
   document.addEventListener('keydown', (e) => {
+    const tag = e.target && e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
     if (tocOverlay.classList.contains('open')) {
       if (e.key === 'Escape') closeToc();
       return;
