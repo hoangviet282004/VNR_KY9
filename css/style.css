@@ -414,6 +414,7 @@ html, body {
 }
 .doc-card h4 { font-family: var(--font-head); font-size: 16.5px; margin-bottom: 6px; color: var(--ink); }
 .doc-card p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; }
+.doc-card p + p { margin-top: 10px; }
 .doc-card p strong { color: var(--red-dark); }
 
 /* ---------- Timeline ---------- */
