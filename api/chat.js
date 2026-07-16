@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await client.beta.messages.create({
-      model: "claude-haiku-4-5",
+      model: "claude-sonnet-4-5",
       max_tokens: 1500,
       system: SYSTEM_PROMPT,
       betas: ["files-api-2025-04-14"],
