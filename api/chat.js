@@ -1,13 +1,31 @@
 import Anthropic from "@anthropic-ai/sdk";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `Bạn là trợ lý AI hỗ trợ học tập cho môn "Lịch sử Đảng Cộng sản Việt Nam", dựa trên nội dung Giáo trình Lịch sử Đảng Cộng sản Việt Nam (Bộ Giáo dục và Đào tạo, NXB Chính trị Quốc gia Sự thật, 2021) đính kèm trong tài liệu.
+// Nội dung thuyết trình — chỉ gồm phần bạn thực sự trình bày (Đại hội VIII, IX).
+const CONTENT_PATH = path.join(
+  __dirname,
+  "..",
+  "KhoNoiDung_3.2.2_DaiHoi_VIII_IX.md",
+);
+const PRESENTATION_CONTENT = fs.readFileSync(CONTENT_PATH, "utf-8");
+
+const SYSTEM_PROMPT = `Bạn là trợ lý AI hỗ trợ học tập cho môn "Lịch sử Đảng Cộng sản Việt Nam", dựa trên nội dung dưới đây (trích từ phần thuyết trình về Đại hội VIII và Đại hội IX).
+
+Nội dung tham khảo:
+"""
+${PRESENTATION_CONTENT}
+"""
 
 Quy tắc trả lời:
-- Trả lời bằng tiếng Việt, ngắn gọn, rõ ràng, bám sát nội dung giáo trình đính kèm.
-- Khi trích số liệu, mốc thời gian, tên nghị quyết, tên đại hội... phải trích chính xác như trong giáo trình.
-- Nếu câu hỏi nằm ngoài phạm vi giáo trình đính kèm, nói rõ là tài liệu không đề cập, không tự bịa thông tin.
+- Trả lời bằng tiếng Việt, ngắn gọn, rõ ràng, bám sát nội dung tham khảo ở trên.
+- Khi trích số liệu, mốc thời gian, tên nghị quyết, tên đại hội... phải trích chính xác như trong nội dung tham khảo.
+- Nếu câu hỏi nằm ngoài phạm vi nội dung tham khảo, nói rõ là tài liệu không đề cập, không tự bịa thông tin.
 - Nếu người dùng hỏi về nội dung không liên quan đến môn học, có thể trả lời ngắn gọn nhưng nhắc rằng bạn được thiết kế để hỗ trợ môn Lịch sử Đảng.`;
 
 export default async function handler(req, res) {
@@ -22,33 +40,25 @@ export default async function handler(req, res) {
     return;
   }
 
-  const fileId = process.env.ANTHROPIC_KB_FILE_ID;
-  if (!process.env.ANTHROPIC_API_KEY || !fileId) {
+  if (!process.env.ANTHROPIC_API_KEY) {
     res.status(500).json({
-      error: "Server chưa cấu hình ANTHROPIC_API_KEY / ANTHROPIC_KB_FILE_ID",
+      error: "Server chưa cấu hình ANTHROPIC_API_KEY",
     });
     return;
   }
 
   try {
-    const response = await client.beta.messages.create({
-      model: "claude-sonnet-4-5",
+    const response = await client.messages.create({
+      model: "claude-haiku-4-5",
       max_tokens: 1500,
-      system: SYSTEM_PROMPT,
-      betas: ["files-api-2025-04-14"],
-      messages: [
+      system: [
         {
-          role: "user",
-          content: [
-            {
-              type: "document",
-              source: { type: "file", file_id: fileId },
-              cache_control: { type: "ephemeral" },
-            },
-            { type: "text", text: message.trim() },
-          ],
+          type: "text",
+          text: SYSTEM_PROMPT,
+          cache_control: { type: "ephemeral" },
         },
       ],
+      messages: [{ role: "user", content: message.trim() }],
     });
 
     const textBlock = response.content.find((b) => b.type === "text");

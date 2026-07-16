@@ -623,6 +623,7 @@ html, body {
   border: 1px solid var(--line);
   color: var(--ink);
   border-bottom-left-radius: 3px;
+  white-space: normal;
 }
 .chat-msg-user {
   align-self: flex-end;
@@ -631,6 +632,50 @@ html, body {
   border-bottom-right-radius: 3px;
 }
 .chat-msg-loading { opacity: .6; font-style: italic; }
+
+/* Markdown render bên trong tin nhắn bot (heading, bảng, list, bold, code) */
+.chat-msg-bot > *:first-child { margin-top: 0; }
+.chat-msg-bot > *:last-child { margin-bottom: 0; }
+.chat-msg-bot h1, .chat-msg-bot h2, .chat-msg-bot h3,
+.chat-msg-bot h4, .chat-msg-bot h5, .chat-msg-bot h6 {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 12px 0 5px;
+  color: var(--red-dark);
+}
+.chat-msg-bot p { margin: 0 0 8px; }
+.chat-msg-bot ul, .chat-msg-bot ol {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+.chat-msg-bot li { margin-bottom: 3px; }
+.chat-msg-bot strong { font-weight: 700; }
+.chat-msg-bot code {
+  background: rgba(0, 0, 0, .06);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12.5px;
+  font-family: monospace;
+}
+.chat-msg-bot table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 4px 0 10px;
+  font-size: 12.5px;
+  display: block;
+  overflow-x: auto;
+}
+.chat-msg-bot th, .chat-msg-bot td {
+  border: 1px solid var(--line);
+  padding: 5px 7px;
+  text-align: left;
+  vertical-align: top;
+}
+.chat-msg-bot th {
+  background: rgba(200, 16, 46, .06);
+  font-weight: 700;
+}
 .chat-input-row {
   display: flex;
   gap: 8px;
